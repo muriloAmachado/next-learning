@@ -4,44 +4,61 @@ import "../global.css"
 import Button from "@/_components/Button";
 import Input from "@/_components/Input";
 import ProductsList from "@/app/novoProduto/_components/ProductsList";
-import {useState, useContext} from "react";
 import {useRouter} from "next/navigation";
-import {ProdcutsContext} from "@/app/_ProductContext";
-
-export type Product = {
-    id: number;
-    name: string;
-    description: string;
-    price: number;
-}
+import {Product, useProductsContext} from "@/app/layout";
+import {useState} from "react";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function novoProduto(props: any) {
 
-    const {setProducts} = useContext(ProdcutsContext);
+    const { products, setProducts } = useProductsContext();
+    const router = useRouter();
 
-    let productList: Product[] = [{
-        id: 1,
-        name: "TESTE1",
-        description: "",
-        price: 0,
-    }, {
-        id: 2,
-        name: "TESTE2",
-        description: "",
-        price: 0,
-    }]
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [price, setPrice] = useState<number>(0);
 
-    function adicionarProduto() {
-        const p1: Product = {
-            id: 3,
-            name: "TESTE3",
-            description: "",
-            price: 0,
-        }
-        setProducts([...products, p1]);
+    function addNewProduct(name:string, description:string, price:string) {
+
+        const numericPrice = parseFloat(
+            price
+                .replace("R$", "") // Remove o símbolo de moeda
+                .replace(".", "")  // Remove separadores de milhar
+                .replace(",", ".") // Substitui a vírgula decimal por ponto
+                .trim()            // Remove espaços extras
+        );
+
+        const newProduct:Product = {
+            id: uuidv4(),
+            name: name,
+            description: description,
+            price: numericPrice,
+        };
+
+        setProducts([...products, newProduct]);
+
+        setName("")
+        setDescription("");
+        setPrice(0);
+        return newProduct;
     }
 
-    const router = useRouter();
+    const mascaraMoeda = (event) => {
+        const onlyDigits = event.target.value
+            .split("")
+            .filter((s:string) => /\d/.test(s))
+            .join("")
+            .padStart(3, "0")
+        const digitsFloat = onlyDigits.slice(0, -2) + "." + onlyDigits.slice(-2)
+        event.target.value = maskCurrency(digitsFloat)
+    }
+
+    const maskCurrency = (valor: any, locale = 'pt-BR', currency = 'BRL') => {
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency
+        }).format(valor)
+    }
 
     return (
 
@@ -49,24 +66,45 @@ export default function novoProduto(props: any) {
             <div>
                 <Button onClick={() => router.push("/")}>{`<`} </Button>
             </div>
-            <p>Quantidade de produtos cadastrados: {products.length}</p>
             <Input
                 placeholder="Nome do produto"
                 type="text"
+                value={name}
+                onChange={(e:any) => setName(e.target.value)}
             />
             <Input
                 placeholder="Descrição"
                 type="text"
+                value={description}
+                onChange={(e:any) => setDescription(e.target.value)}
             />
             <Input
                 placeholder="Preço"
                 type="text"
+                value={price}
+                onChange={(e:any) => setPrice(e.target.value)}
+                onInput={() => mascaraMoeda(event)}
             />
             <div className="flex justify-end">
-                <Button onClick={() => adicionarProduto()}>Cadastrar</Button>
+                <Button onClick={() => {
+                    if(name!=="" || description!=="" || price!==0) {
+                        addNewProduct(name, description, price)
+                    }else {
+                        alert("Preencha todos os campos para cadastrar o novo produto")
+                    }
+                }
+                }>
+                    Cadastrar</Button>
             </div>
             <div>
-                <ProductsList products={products} />
+                <ProductsList setName={setName}
+                    setDescription={setDescription}
+                    setPrice={setPrice}
+                              name={name}
+                              description={description}
+                              price={price}
+                              addNewProduct={addNewProduct}
+                />
             </div>
         </div>
     );

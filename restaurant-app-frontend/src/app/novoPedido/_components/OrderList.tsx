@@ -1,26 +1,25 @@
 import {Product, useProductsContext} from "@/app/layout";
 import Button from "@/_components/Button";
+import {useOrderContext} from "@/app/novoPedido/page";
 
-export default function ProductsList(props?:any) {
+export default function OrderList(props: any) {
     const { products, setProducts } = useProductsContext();
+    const { orderProducts, setOrderProducts } = useOrderContext();
 
-    function removeProduct(id: string) {
+    function removeProduct(id: number) {
         setProducts(products.filter((product: Product) => product.id !== id));
     }
 
-    function editProduct(id: string) {
-        let product = products.find((product: Product) => product.id === id);
+    function deleteProduct(id: number) {
+        let p = orderProducts.find((product: Product) => product.id === id) as Product;
 
-        props.setName(product.name);
-        props.setDescription(product.description);
-        props.setPrice(product.price);
-
-        removeProduct(product.id);
+        setProducts([...products, p]);
+        setOrderProducts(orderProducts.filter((product: Product) => product.id !== id));
     }
 
     return (
         <ul role="list" className="divide-y space-y-2 divide-gray-200">
-            {products.map((product: Product) => (
+            {orderProducts.map((product: Product) => (
                 <li
                     className="flex-col py-3 bg-amber-200 rounded-md"
                     key={product.id}
@@ -31,8 +30,7 @@ export default function ProductsList(props?:any) {
                         <p>Preço: {product.price}</p>
                     </div>
                     <div className="px-2 flex justify-end min-w-max space-x-2">
-                        <Button onClick={() => editProduct(product.id)}>Editar</Button>
-                        <Button onClick={() => removeProduct(product.id)}>Excluir</Button>
+                        <Button onClick={() => deleteProduct(product.id)}>{props.buttonTitle}</Button>
                     </div>
                 </li>
             )
