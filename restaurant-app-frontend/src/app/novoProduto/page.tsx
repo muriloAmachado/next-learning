@@ -21,11 +21,10 @@ export default function novoProduto(props: any) {
     function addNewProduct(name:string, description:string, price:string) {
 
         const numericPrice = parseFloat(
-            price
-                .replace("R$", "") // Remove o símbolo de moeda
-                .replace(".", "")  // Remove separadores de milhar
-                .replace(",", ".") // Substitui a vírgula decimal por ponto
-                .trim()            // Remove espaços extras
+            price.replace("R$", "")
+                .replace(".", "")
+                .replace(",", ".")
+                .trim()
         );
 
         const newProduct:Product = {

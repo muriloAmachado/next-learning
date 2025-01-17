@@ -7,14 +7,15 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {Product, useProductsContext} from "@/app/layout";
 import Button from "@/_components/Button";
 import {useRouter} from "next/navigation";
-
-const OrderContext = createContext<any>(undefined);
+import {formarterPrice} from "@/app/novoProduto/_components/ProductsList";
+import ConfirmarPedido from "@/app/novoPedido/ConfirmarPedido/page";
+import {useOrderContext} from "@/app/novoPedido/layout";
 
 export default function NovoPedido() {
 
-    const [ orderProducts, setOrderProducts ] = useState<Product[]>([]);
     const { products, setProducts } = useProductsContext();
-    const [total, setTotal] = useState();
+    const [total, setTotal] = useState<number>(0);
+    const { orderProducts, setOrderProducts } = useOrderContext();
 
     useEffect(() => {
         let t = 0;
@@ -46,25 +47,25 @@ export default function NovoPedido() {
             <div className="w-full bg-white flex p-2 items-center rounded-md justify-center gap-x-2">
                 <div className="flex-col align-middle justify-center w-3/4">
                     <h1 className="min-w-max text-center mb-2">Produtos disponíveis</h1>
-                    <OrderContext.Provider value={{orderProducts, setOrderProducts}}>
+
                         <AvailableProducts buttonTitle={"Adicionar"}/>
-                    </OrderContext.Provider>
                 </div>
                 <div className=" w-3/4">
                     <h1 className="min-w-max text-center mb-2">Seu pedido</h1>
-                    <OrderContext.Provider value={{orderProducts, setOrderProducts}}>
                         <OrderList buttonTitle={"Remover"}/>
-                    </OrderContext.Provider>
                 </div>
             </div>
             <div>
-                <h1 className="text-end">Total a pagar: {total}</h1>
-                <Button onClick={() => console.log(total)}></Button>
+                <h1 className="text-end">Total a pagar: {formarterPrice(total)}</h1>
+                <Button
+                    onClick={() => {
+                        setOrderProducts([]);
+                        alert("Pedido concluído!")
+                        router.push("/")
+                    }
+                }
+                >Confirmar</Button>
             </div>
         </div>
     );
-}
-
-export function useOrderContext(){
-    return useContext(OrderContext);
 }
