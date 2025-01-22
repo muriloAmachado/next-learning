@@ -3,12 +3,11 @@
 import "../global.css"
 import AvailableProducts from "@/app/novoPedido/_components/AvailableProducts";
 import OrderList from "@/app/novoPedido/_components/OrderList";
-import {createContext, useContext, useEffect, useState} from "react";
-import {Product, useProductsContext} from "@/app/layout";
+import {useEffect, useState} from "react";
+import {useProductsContext} from "@/app/layout";
 import Button from "@/_components/Button";
 import {useRouter} from "next/navigation";
 import {formarterPrice} from "@/app/novoProduto/_components/ProductsList";
-import ConfirmarPedido from "@/app/novoPedido/ConfirmarPedido/page";
 import {useOrderContext} from "@/app/novoPedido/layout";
 
 export default function NovoPedido() {
@@ -35,11 +34,12 @@ export default function NovoPedido() {
                 <Button onClick={() => {
                         console.log(orderProducts);
                         if (orderProducts.length > 0) {
-                            orderProducts.forEach((product: Product) => {
-                                setProducts([...products, product]);
-                            })
+                            const updatedProducts = [...products, ...orderProducts];
+                            console.log(updatedProducts);
+                            setProducts(updatedProducts);
+                            setOrderProducts([]);
                         }
-                        router.push("/")
+                        router.push("/");
                     }
                 }
                 >{`<`} </Button>
@@ -47,7 +47,6 @@ export default function NovoPedido() {
             <div className="w-full bg-white flex p-2 items-center rounded-md justify-center gap-x-2">
                 <div className="flex-col align-middle justify-center w-3/4">
                     <h1 className="min-w-max text-center mb-2">Produtos disponíveis</h1>
-
                         <AvailableProducts buttonTitle={"Adicionar"}/>
                 </div>
                 <div className=" w-3/4">

@@ -5,36 +5,43 @@ import Button from "@/_components/Button";
 import Input from "@/_components/Input";
 import ProductsList from "@/app/novoProduto/_components/ProductsList";
 import {useRouter} from "next/navigation";
-import {Product, useProductsContext} from "@/app/layout";
-import {useState} from "react";
-import { v4 as uuidv4 } from 'uuid';
+import { useProductsContext} from "@/app/layout";
+import {useEffect, useState} from "react";
+import {v4 as uuidv4} from 'uuid';
+import {ProductService} from "../../../service/ProductService";
+import { Product } from "../../../lib/types";
 
 export default function novoProduto(props: any) {
 
     const { products, setProducts } = useProductsContext();
     const router = useRouter();
+    const productService = new ProductService();
 
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState<number>(0);
 
-    function addNewProduct(name:string, description:string, price:string) {
+    function addNewProduct(name:string, description:string, price:string | number) {
 
         const numericPrice = parseFloat(
-            price.replace("R$", "")
+            price.toString().replace("R$", "")
                 .replace(".", "")
                 .replace(",", ".")
                 .trim()
         );
 
         const newProduct:Product = {
-            id: uuidv4(),
             name: name,
             description: description,
             price: numericPrice,
         };
 
-        setProducts([...products, newProduct]);
+        productService.newProduct(newProduct)
+            .then((response) =>{
+                productService.getAllProducts().then((response) => {
+                    setProducts(response.data);
+                })
+            })
 
         setName("")
         setDescription("");
@@ -42,14 +49,14 @@ export default function novoProduto(props: any) {
         return newProduct;
     }
 
-    const mascaraMoeda = (event) => {
-        const onlyDigits = event.target.value
+    const mascaraMoeda = (e) => {
+        const onlyDigits = e.target.value
             .split("")
             .filter((s:string) => /\d/.test(s))
             .join("")
             .padStart(3, "0")
         const digitsFloat = onlyDigits.slice(0, -2) + "." + onlyDigits.slice(-2)
-        event.target.value = maskCurrency(digitsFloat)
+        e.target.value = maskCurrency(digitsFloat)
     }
 
     const maskCurrency = (valor: any, locale = 'pt-BR', currency = 'BRL') => {
@@ -60,8 +67,8 @@ export default function novoProduto(props: any) {
     }
 
     return (
-
-        <div className="w-96 h-96 flex flex-col space-y-3 justify-center">
+        <div className="w-96 h-screen p-4 space-y-2">
+            <div className="flex flex-col space-y-2">
             <div>
                 <Button onClick={() => router.push("/")}>{`<`} </Button>
             </div>
@@ -89,12 +96,14 @@ export default function novoProduto(props: any) {
                     if(name!=="" || description!=="" || price!==0) {
                         addNewProduct(name, description, price)
                     }else {
-                        alert("Preencha todos os campos para cadastrar o novo produto")
+                            alert("Preencha todos os campos para cadastrar o novo produto")
+                        }
                     }
-                }
                 }>
                     Cadastrar</Button>
             </div>
+            </div>
+
             <div>
                 <ProductsList setName={setName}
                     setDescription={setDescription}

@@ -33,7 +33,10 @@ export default function AvailableProducts(props:any) {
                                 <p>Preço: R$ {formarterPrice(product.price)}</p>
                             </div>
                             <div className="px-2 flex justify-end min-w-max space-x-2">
-                                <Button onClick={() => addProductToOrder(product.id)}>{props.buttonTitle}</Button>
+                                <Button onClick={() => {addProductToOrder(product.id)
+                                        console.log(orderProducts)
+                                    }
+                                }>{props.buttonTitle}</Button>
                             </div>
                         </li>
                     )

@@ -1,55 +1,32 @@
 "use client"
-import {useContext, createContext, useState, useEffect} from "react";
-import {id} from "postcss-selector-parser";
-
-export type Product = {
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-}
-
-const listProducts: Product[] = [
-    {
-        id: "1",
-        name: "Notebook",
-        description: "Notebook de alta performance com processador Intel i7 e 16GB de RAM.",
-        price: 4500.00
-    },
-    {
-        id: "2",
-        name: "Smartphone",
-        description: "Smartphone com câmera de 108MP e tela AMOLED.",
-        price: 2500.50
-    },
-    {
-        id: "3",
-        name: "Fone de Ouvido Bluetooth",
-        description: "Fone de ouvido com cancelamento de ruído e longa duração de bateria.",
-        price: 350.00
-    }
-];
+import {useContext, createContext, useState, ReactNode, useEffect} from "react";
+import {Product} from "../../lib/types";
+import {ProductService} from "../../service/ProductService";
 
 export type AppContextType = {
     products: Product[];
     setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
 };
 
-const AppContext = createContext<any>(undefined);
+const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode;
 }) {
 
-    const [products, setProducts] = useState<Product[]>(
-         listProducts
-    );
+    const [products, setProducts] = useState<Product[]>([])
+    const productService = new ProductService();
 
     useEffect(() => {
-        localStorage.setItem("products", JSON.stringify(products));
-    }, [products]);
+        productService.getAllProducts().then((response) => {
+            console.log(response.data);
+            setProducts(response.data);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }, [])
 
   return (
       <html lang="en">
@@ -63,5 +40,10 @@ export default function RootLayout({
 }
 
 export function useProductsContext(){
-    return useContext(AppContext);
+    const context = useContext(AppContext);
+
+    if (!context) {
+        throw new Error("useProductsContext must be used within a context");
+    }
+    return context;
 }
