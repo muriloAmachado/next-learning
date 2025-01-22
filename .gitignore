@@ -1,1 +1,7 @@
-.gitignore
+.idea/
+restaurant-app-frontend/.idea/
+restaurant-app-backend/restaurant-app/.vs/
+restaurant-app-backend/restaurant-app/.idea/
+.vs/
+*.vsidx
+

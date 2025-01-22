@@ -1,0 +1,76 @@
+[
+  {
+    "ContainingType": "restaurant_app.Domain.Order.OrderController",
+    "Method": "Add",
+    "RelativePath": "api/v1/order",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "products",
+        "Type": "System.Collections.Generic.List\u00601[[restaurant_app.Domain.Product.ProductModel, restaurant-app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "restaurant_app.Domain.Order.OrderController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/order",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "restaurant_app.Domain.Product.ProductController",
+    "Method": "Add",
+    "RelativePath": "api/v1/product",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productView",
+        "Type": "restaurant_app.ViewModel.ProductViewModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "restaurant_app.Domain.Product.ProductController",
+    "Method": "Get",
+    "RelativePath": "api/v1/product",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "restaurant_app.Domain.Product.ProductController",
+    "Method": "Delete",
+    "RelativePath": "api/v1/product",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
